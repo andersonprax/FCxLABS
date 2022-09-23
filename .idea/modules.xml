@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Avaliacao_FCxLABS.iml" filepath="$PROJECT_DIR$/.idea/Avaliacao_FCxLABS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/avaliacao-fcx-labs-rest-api/avaliacao-fcx-labs-rest-api.iml" filepath="$PROJECT_DIR$/avaliacao-fcx-labs-rest-api/avaliacao-fcx-labs-rest-api.iml" />
+    </modules>
+  </component>
+</project>
