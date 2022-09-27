@@ -1,11 +1,15 @@
 package com.example.avaliacao.fcx.labs.rest.api.controller;
 
+import com.example.avaliacao.fcx.labs.rest.api.controller.dto.UpdateUserRequest;
 import com.example.avaliacao.fcx.labs.rest.api.model.UserModel;
 import com.example.avaliacao.fcx.labs.rest.api.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +19,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService service;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public UserController(UserService service){
         super();
@@ -37,7 +42,7 @@ public class UserController {
      * @return
      */
     @GetMapping(path = "/api/usuarios/{id}")
-    public ResponseEntity findById(@PathVariable(name = "id") Long id){
+    public ResponseEntity<UserModel> findById(@PathVariable(name = "id") Long id){
         return service.getUser(id)
                 /**
                  * Chamando o método map e retornando "ok" com o registro(record)
@@ -45,6 +50,68 @@ public class UserController {
                  */
                 .map(record -> ResponseEntity.ok().body(record))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Método responsável por fazer a consulta pelo cpf do usuário no banco de dados
+     * @param cpf
+     * @return
+     */
+    @GetMapping(path = "/api/usuarios/cpf={cpf}")
+    public ResponseEntity<UserModel> findByCpf(@PathVariable(name = "cpf") String cpf){
+        return new ResponseEntity<>(service.findByCpf(cpf), HttpStatus.OK);
+    }
+
+    /**
+     * Método responsável por fazer a consulta pelo login do usuário no banco de dados
+     * @param login
+     * @return
+     */
+    @GetMapping(path = "/api/usuarios/login={login}")
+    public ResponseEntity<UserModel> findByLogin(@PathVariable(name = "login") String login) {
+        return new ResponseEntity<>(service.findByLogin(login), HttpStatus.OK);
+    }
+
+    /**
+     * Método responsável por fazer a consulta pelo status do usuário no banco de dados
+     * @param status
+     * @return
+     */
+    @GetMapping(path =  "/api/usuarios/status={status}")
+    public ResponseEntity<UserModel> findByStatus(@PathVariable(name = "status") String status) {
+        return new ResponseEntity<>(service.findByStatus(status), HttpStatus.OK);
+    }
+
+    /**
+     * Método responsável por fazer a consulta pela data de nascimento do usuário no banco de dados
+     * @param dataNascimento
+     * @return
+     */
+    @GetMapping(path =  "/api/usuarios/dataNascimento={dataNascimento}")
+    public ResponseEntity<UserModel> findBydataNascimento(@PathVariable(name =
+            "dataNascimento") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dataNascimento){
+        return new ResponseEntity<>(service.findBydataNascimento(dataNascimento), HttpStatus.OK);
+    }
+
+    /**
+     * Método responsável por fazer a consulta pela data de inclusão do usuário no banco de dados
+     * @param dataInclusao
+     * @return
+     */
+    @GetMapping(path =  "/api/usuarios/dataInclusao={dataInclusao}")
+    public ResponseEntity<UserModel> findBydataInclusao(@PathVariable(name =
+            "dataInclusao") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date dataInclusao){
+        return new ResponseEntity<>(service.findBydataInclusao(dataInclusao), HttpStatus.OK);
+    }
+
+    /**
+     * Método responsável por fazer a consulta pela data da alteração do usuário no banco de dados
+     * @param dataAlteracao
+     * @return
+     */
+    public ResponseEntity<UserModel> findBydataAlteracao(@PathVariable(name =
+            "dataAlteracao") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date dataAlteracao){
+        return new ResponseEntity<>(service.findBydataAlteracao(dataAlteracao), HttpStatus.OK);
     }
 
     /**
@@ -59,22 +126,14 @@ public class UserController {
     /**
      * Método responsável por atualizar os usuários pelo ID no banco de dados
      * @param id
-     * @param userRequest
+     * @param updateUserRequest
      * @return
      */
     @PutMapping(path = "/api/usuarios/{id}")
-    public ResponseEntity update(@PathVariable(name = "id") Long id, @RequestBody UserModel userRequest) {
-        userRequest.setId(id);
-        try {
-            UserModel user = service.update(userRequest);
-            if (user == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(user, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity update(@PathVariable(name = "id") Long id, @RequestBody UpdateUserRequest updateUserRequest) {
+        updateUserRequest.setId(id);
+        UserModel user = service.update(updateUserRequest);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     /**
